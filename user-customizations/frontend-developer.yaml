@@ -6,7 +6,7 @@ tasks:
   - name: ~/git-clone
     displayName: "Clone Next.js Starter Repository"
     parameters:
-      repositoryUrl: https://github.com/vercel/next.js
+      repositoryUrl: https://github.com/vercel/next_js
       directory: C:\Repos\next.js
   - name: ~/winget
     displayName: "Install Firefox Developer Edition"
