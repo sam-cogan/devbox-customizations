@@ -1,3 +1,5 @@
+$schema: "1.0"
+
 # User customization: Data Engineer
 # Upload this file when creating a Dev Box to add data engineering tools
 # on top of the team image definition.
