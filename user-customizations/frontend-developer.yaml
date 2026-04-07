@@ -3,6 +3,11 @@
 # on top of the team image definition.
 
 tasks:
+  - name: ~/git-clone
+    displayName: "Clone Next.js Starter Repository"
+    parameters:
+      repositoryUrl: https://github.com/vercel/next.js
+      directory: C:\Repos\next.js
   - name: ~/winget
     displayName: "Install Firefox Developer Edition"
     parameters:
