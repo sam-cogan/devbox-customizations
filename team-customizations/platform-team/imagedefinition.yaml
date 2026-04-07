@@ -20,10 +20,6 @@ tasks:
     displayName: "Install Python 3"
     parameters:
       package: Python.Python.3.12
-  - name: ~/winget
-    displayName: "Install Postman"
-    parameters:
-      package: Postman.Postman
   - name: ~/git-clone
     displayName: "Clone Team Repository"
     parameters:
