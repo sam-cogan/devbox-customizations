@@ -1,6 +1,7 @@
 $schema: "1.0"
 name: "platform-team"
 description: "Platform team dev box with core development tools and team repository"
+image: microsoftvisualstudio_visualstudioplustools_vs-2022-ent-general-win11-m365-gen2
 
 tasks:
   - name: ~/winget
@@ -26,8 +27,8 @@ tasks:
   - name: ~/git-clone
     displayName: "Clone Team Repository"
     parameters:
-      repositoryUrl: https://github.com/dotnet/eshop
-      directory: C:\Repos\eshop
+      repositoryUrl: https://github.com/sam-cogan/TeamCustomizations
+      directory: C:\Repos\TeamCustomizations
 
 userTasks:
   - name: ~/winget
