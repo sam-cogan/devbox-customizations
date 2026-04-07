@@ -1,0 +1,33 @@
+# User customization: Data Engineer
+# Upload this file when creating a Dev Box to add data engineering tools
+# on top of the team image definition.
+
+tasks:
+  - name: ~/winget
+    displayName: "Install Azure Data Studio"
+    parameters:
+      package: Microsoft.AzureDataStudio
+  - name: ~/winget
+    displayName: "Install Azure Storage Explorer"
+    parameters:
+      package: Microsoft.AzureStorageExplorer
+  - name: ~/winget
+    displayName: "Install Windows Terminal"
+    parameters:
+      package: Microsoft.WindowsTerminal
+  - name: ~/powershell
+    displayName: "Install Python Data Science Packages"
+    parameters:
+      command: |
+        Write-Host "Installing Python data science packages..."
+        pip install pandas numpy matplotlib jupyter
+        Write-Host "Python data science packages installed."
+  - name: ~/powershell
+    displayName: "Install VS Code Data Extensions"
+    parameters:
+      command: |
+        Write-Host "Installing VS Code extensions for data engineering..."
+        code --install-extension ms-python.python
+        code --install-extension ms-toolsai.jupyter
+        code --install-extension ms-azuretools.vscode-cosmosdb
+        Write-Host "Data VS Code extensions installed."

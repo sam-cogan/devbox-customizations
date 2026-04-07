@@ -1,0 +1,45 @@
+$schema: "1.0"
+name: "platform-team"
+description: "Platform team dev box with core development tools and team repository"
+
+tasks:
+  - name: ~/winget
+    displayName: "Install Visual Studio Code"
+    parameters:
+      package: Microsoft.VisualStudioCode
+  - name: ~/winget
+    displayName: "Install Git"
+    parameters:
+      package: Git.Git
+  - name: ~/winget
+    displayName: "Install Node.js LTS"
+    parameters:
+      package: OpenJS.NodeJS.LTS
+  - name: ~/winget
+    displayName: "Install Python 3"
+    parameters:
+      package: Python.Python.3.12
+  - name: ~/winget
+    displayName: "Install Postman"
+    parameters:
+      package: Postman.Postman
+  - name: ~/git-clone
+    displayName: "Clone Team Repository"
+    parameters:
+      repositoryUrl: https://github.com/sam-cogan/TeamCustomizations
+      directory: C:\Repos\TeamCustomizations
+
+userTasks:
+  - name: ~/winget
+    displayName: "Install Microsoft Teams"
+    parameters:
+      package: Microsoft.Teams
+  - name: ~/powershell
+    displayName: "Configure Git Identity"
+    parameters:
+      command: |
+        Write-Host "Configuring default Git settings..."
+        git config --global init.defaultBranch main
+        git config --global core.autocrlf true
+        git config --global pull.rebase true
+        Write-Host "Git default settings configured."

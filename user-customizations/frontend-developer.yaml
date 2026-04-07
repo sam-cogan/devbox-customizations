@@ -1,0 +1,27 @@
+# User customization: Frontend Developer
+# Upload this file when creating a Dev Box to add frontend-specific tools
+# on top of the team image definition.
+
+tasks:
+  - name: ~/winget
+    displayName: "Install Firefox Developer Edition"
+    parameters:
+      package: Mozilla.Firefox.DeveloperEdition
+  - name: ~/winget
+    displayName: "Install Figma"
+    parameters:
+      package: Figma.Figma
+  - name: ~/winget
+    displayName: "Install Windows Terminal"
+    parameters:
+      package: Microsoft.WindowsTerminal
+  - name: ~/powershell
+    displayName: "Install VS Code Frontend Extensions"
+    parameters:
+      command: |
+        Write-Host "Installing VS Code extensions for frontend development..."
+        code --install-extension dbaeumer.vscode-eslint
+        code --install-extension esbenp.prettier-vscode
+        code --install-extension bradlc.vscode-tailwindcss
+        code --install-extension formulahendry.auto-rename-tag
+        Write-Host "Frontend VS Code extensions installed."
