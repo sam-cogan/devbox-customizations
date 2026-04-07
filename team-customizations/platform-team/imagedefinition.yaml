@@ -26,8 +26,8 @@ tasks:
   - name: ~/git-clone
     displayName: "Clone Team Repository"
     parameters:
-      repositoryUrl: https://github.com/sam-cogan/TeamCustomizations
-      directory: C:\Repos\TeamCustomizations
+      repositoryUrl: https://github.com/dotnet/eshop
+      directory: C:\Repos\eshop
 
 userTasks:
   - name: ~/winget
