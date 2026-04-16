@@ -4,21 +4,6 @@ description: "Platform team dev box with core development tools, Dev Drive, and 
 image: microsoftvisualstudio_visualstudioplustools_vs-2022-ent-general-win11-m365-gen2
 
 tasks:
-  - name: ~/powershell
-    displayName: "Create Dev Drive"
-    parameters:
-      command: |
-        Write-Host "Creating Dev Drive..."
-        $vhdPath = "C:\DevDrive.vhdx"
-        $driveLetter = "D"
-        $sizeBytes = 50GB
-        New-VHD -Path $vhdPath -SizeBytes $sizeBytes -Dynamic
-        Mount-VHD -Path $vhdPath
-        $disk = Get-VHD -Path $vhdPath | Get-Disk
-        Initialize-Disk -Number $disk.Number -PartitionStyle GPT
-        $partition = New-Partition -DiskNumber $disk.Number -UseMaximumSize -DriveLetter $driveLetter
-        Format-Volume -DriveLetter $driveLetter -DevDrive -Confirm:$false
-        Write-Host "Dev Drive created at ${driveLetter}:\"
   - name: ~/winget
     displayName: "Install Visual Studio Code"
     parameters:
@@ -35,13 +20,22 @@ tasks:
     displayName: "Install Python 3"
     parameters:
       package: Python.Python.3.12
-  - name: ~/git-clone
-    displayName: "Clone Team Repository"
-    parameters:
-      repositoryUrl: https://github.com/sam-cogan/TeamCustomizations
-      directory: D:\Repos\TeamCustomizations
-
 userTasks:
+  - name: ~/powershell
+    displayName: "Create Dev Drive"
+    parameters:
+      command: |
+        Write-Host "Creating Dev Drive..."
+        $vhdPath = "C:\DevDrive.vhdx"
+        $driveLetter = "D"
+        $sizeBytes = 50GB
+        New-VHD -Path $vhdPath -SizeBytes $sizeBytes -Dynamic
+        Mount-VHD -Path $vhdPath
+        $disk = Get-VHD -Path $vhdPath | Get-Disk
+        Initialize-Disk -Number $disk.Number -PartitionStyle GPT
+        $partition = New-Partition -DiskNumber $disk.Number -UseMaximumSize -DriveLetter $driveLetter
+        Format-Volume -DriveLetter $driveLetter -DevDrive -Confirm:$false
+        Write-Host "Dev Drive created at ${driveLetter}:\"
   - name: ~/winget
     displayName: "Install Microsoft Teams"
     parameters:
@@ -55,3 +49,9 @@ userTasks:
         git config --global core.autocrlf true
         git config --global pull.rebase true
         Write-Host "Git default settings configured."
+  - name: ~/git-clone
+    displayName: "Clone Team Repository"
+    parameters:
+      repositoryUrl: https://github.com/sam-cogan/TeamCustomizations
+      directory: D:\Repos\TeamCustomizations
+
