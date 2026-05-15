@@ -4,20 +4,20 @@ description: "Team dev box that installs core development tools using Chocolatey
 image: microsoftvisualstudio_visualstudioplustools_vs-2022-ent-general-win11-m365-gen2
 
 tasks:
-  - name: ~/choco
+  - name: choco
     displayName: "Install Visual Studio Code (Chocolatey)"
     parameters:
       package: vscode
-  - name: ~/choco
+  - name: choco
     displayName: "Install Git (Chocolatey)"
     parameters:
       package: git
-  - name: ~/choco
+  - name: choco
     displayName: "Install 7-Zip (Chocolatey)"
     parameters:
       package: 7zip
 userTasks:
-  - name: ~/choco
+  - name: choco
     displayName: "Install Notepad++ (Chocolatey)"
     parameters:
       package: notepadplusplus
