@@ -1,0 +1,36 @@
+# Configures a Chocolatey package source (optionally with credentials).
+name: choco-source
+description: Registers a Chocolatey package source. Credentials can be hydrated from Azure Key Vault.
+author: Platform Team
+command: ".\\ChocoSource.ps1 -Name {{name}} -Source {{source}} -User {{user}} -Password {{password}} -Priority {{priority}} -DisableDefaultSource {{disableDefaultSource}}"
+inputs:
+  name:
+    type: string
+    defaultValue: ""
+    required: true
+    description: Friendly name to register the source under (for example, "internal").
+  source:
+    type: string
+    defaultValue: ""
+    required: true
+    description: URL of the Chocolatey feed (for example, "https://choco.contoso.local/chocolatey").
+  user:
+    type: string
+    defaultValue: ""
+    required: false
+    description: Username for the feed. Leave empty for anonymous feeds.
+  password:
+    type: string
+    defaultValue: ""
+    required: false
+    description: Password or API token. Reference an Azure Key Vault secret using the {{https://vault.../secrets/name}} syntax.
+  priority:
+    type: string
+    defaultValue: ""
+    required: false
+    description: Optional priority for the source (lower = higher priority).
+  disableDefaultSource:
+    type: string
+    defaultValue: "false"
+    required: false
+    description: Set to "true" to disable the public chocolatey.org community source after registering this one.
