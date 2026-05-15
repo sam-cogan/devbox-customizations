@@ -5,9 +5,16 @@ This repository contains Dev Box customization definitions for demo purposes.
 ## Structure
 
 ```
+├── tasks/
+│   └── choco/                      # Custom catalog task that installs packages via Chocolatey
+│       ├── task.yaml
+│       └── Choco.ps1
+│
 ├── team-customizations/
-│   └── platform-team/
-│       └── imagedefinition.yaml    # Team image definition (applied to all dev boxes in a pool)
+│   ├── platform-team/
+│   │   └── imagedefinition.yaml    # Team image definition (Winget-based)
+│   └── choco-team/
+│       └── imagedefinition.yaml    # Team image definition that uses the custom choco task
 │
 └── user-customizations/
     ├── frontend-developer.yaml     # Example user customization for frontend developers
@@ -24,6 +31,14 @@ The `team-customizations/platform-team/` folder contains an `imagedefinition.yam
 - Configures Git settings via PowerShell
 
 To use: attach this repository as a catalog to your Dev Box project, then select the `platform-team` image definition when creating a pool.
+
+The `team-customizations/choco-team/` folder contains an alternative image definition that uses [Chocolatey](https://chocolatey.org/) instead of Winget to install packages. It references the custom `choco` task defined in `tasks/choco/`, which bootstraps Chocolatey (if not already installed) and then runs `choco install` for the requested package.
+
+## Custom Tasks
+
+The `tasks/` folder contains custom catalog tasks that can be referenced from image definitions using the `~/<task-name>` syntax:
+
+- **choco** — Installs a package using Chocolatey. Inputs: `package` (required), `version` (optional), `ignoreChecksums` (optional).
 
 ## User Customizations
 
