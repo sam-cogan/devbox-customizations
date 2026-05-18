@@ -2,7 +2,7 @@
 name: choco-source
 description: Registers a Chocolatey package source. Credentials can be fetched directly from Azure Key Vault using the Dev Box Managed Identity.
 author: Platform Team
-command: ".\\ChocoSource.ps1 -Name {{name}} -Source {{source}} -User {{user}} -KeyVaultSecret {{keyVaultSecret}} -Priority {{priority}} -DisableDefaultSource {{disableDefaultSource}}"
+command: ".\\ChocoSource.ps1 -Name {{name}} -Source {{source}} -User {{user}} -KeyVaultName {{keyVaultName}} -KeyVaultSecretName {{keyVaultSecretName}} -Priority {{priority}} -DisableDefaultSource {{disableDefaultSource}}"
 inputs:
   name:
     type: string
@@ -19,11 +19,16 @@ inputs:
     defaultValue: ""
     required: false
     description: Username for the feed. Leave empty for anonymous feeds.
-  keyVaultSecret:
+  keyVaultName:
     type: string
     defaultValue: ""
     required: false
-    description: Full Key Vault secret URI (e.g. "https://myvault.vault.azure.net/secrets/choco-password"). The secret is fetched at runtime using the Dev Box Managed Identity. Overrides the password input if both are provided.
+    description: Name of the Azure Key Vault containing the feed password (e.g. "myvault").
+  keyVaultSecretName:
+    type: string
+    defaultValue: ""
+    required: false
+    description: Name of the secret in the Key Vault that holds the feed password (e.g. "choco-feed-password").
   priority:
     type: string
     defaultValue: ""

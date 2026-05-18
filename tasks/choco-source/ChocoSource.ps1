@@ -13,7 +13,10 @@ param(
     [string] $Password,
 
     [Parameter()]
-    [string] $KeyVaultSecret,
+    [string] $KeyVaultName,
+
+    [Parameter()]
+    [string] $KeyVaultSecretName,
 
     [Parameter()]
     [string] $Priority,
@@ -98,10 +101,11 @@ function Get-KeyVaultSecretViaMI {
 Write-Host "Ensuring Chocolatey is installed."
 Ensure-Chocolatey -ChocoExePath "$Choco"
 
-# Resolve password from Key Vault if a Key Vault secret URI is provided.
-if ($KeyVaultSecret) {
+# Resolve password from Key Vault if vault name and secret name are provided.
+if ($KeyVaultName -and $KeyVaultSecretName) {
+    $secretUri = "https://${KeyVaultName}.vault.azure.net/secrets/${KeyVaultSecretName}"
     Write-Host "Resolving password from Azure Key Vault..."
-    $Password = Get-KeyVaultSecretViaMI -SecretUri $KeyVaultSecret
+    $Password = Get-KeyVaultSecretViaMI -SecretUri $secretUri
 }
 
 # Build argument list rather than a single string so the password is not echoed.

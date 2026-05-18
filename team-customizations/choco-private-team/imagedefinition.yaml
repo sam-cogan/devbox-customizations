@@ -21,7 +21,8 @@ tasks:
       name: internal
       source: http://10.0.1.5:8081/repository/choco-hosted/
       user: "choco-reader"
-      keyVaultSecret: "https://kv-choco-devbox.vault.azure.net/secrets/choco-feed-password"
+      keyVaultName: "kv-choco-devbox"
+      keyVaultSecretName: "choco-feed-password"
       priority: "1"
       disableDefaultSource: "true"
 
