@@ -26,20 +26,20 @@ tasks:
       priority: "1"
       disableDefaultSource: "true"
 
-  # 2. Install packages. With the community source disabled above, these resolve
-  #    against the private "internal" feed only.
-  - name: choco
-    displayName: "Install Visual Studio Code (private feed)"
-    parameters:
-      package: vscode
-  - name: choco
-    displayName: "Install Git (private feed)"
-    parameters:
-      package: git
-  - name: choco
-    displayName: "Install 7-Zip (private feed)"
-    parameters:
-      package: 7zip
+  # 2. Install packages - COMMENTED OUT FOR DEBUGGING
+  #    Uncomment once Key Vault integration is verified working
+  # - name: choco
+  #   displayName: "Install Visual Studio Code (private feed)"
+  #   parameters:
+  #     package: vscode
+  # - name: choco
+  #   displayName: "Install Git (private feed)"
+  #   parameters:
+  #     package: git
+  # - name: choco
+  #   displayName: "Install 7-Zip (private feed)"
+  #   parameters:
+  #     package: 7zip
 
 # userTasks:
 #   - name: choco
