@@ -12,17 +12,16 @@ buildProperties:
   networkConnection: "nc-devbox-sweden"
 
 tasks:
-  # 1. Register the private feed first, with credentials fetched from Key Vault
-  #    using the Dev Box Managed Identity.
-  #    Replace the vault name, secret names, and source URL to match your environment.
+  # 1. Register the private feed first, with credentials resolved from Key Vault
+  #    by the Dev Box service using the {{secret_URI}} placeholder syntax.
+  #    Replace the vault name, secret name, and source URL to match your environment.
   - name: choco-source
     displayName: "Register private Chocolatey feed"
     parameters:
       name: internal
       source: http://10.0.1.5:8081/repository/choco-hosted/
-      user: "choco-reader"
-      keyVaultName: "kv-choco-devbox"
-      keyVaultSecretName: "choco-feed-password"
+      user: "{{https://kv-choco-devbox.vault.azure.net/secrets/choco-feed-user}}"
+      password: "{{https://kv-choco-devbox.vault.azure.net/secrets/choco-feed-password}}"
       priority: "1"
       disableDefaultSource: "true"
 
