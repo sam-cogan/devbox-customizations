@@ -1,8 +1,8 @@
 # Configures a Chocolatey package source (optionally with credentials).
 name: choco-source
-description: Registers a Chocolatey package source. Credentials can be hydrated from Azure Key Vault.
+description: Registers a Chocolatey package source. Credentials can be fetched directly from Azure Key Vault using the Dev Box Managed Identity.
 author: Platform Team
-command: ".\\ChocoSource.ps1 -Name {{name}} -Source {{source}} -User {{user}} -Password {{password}} -Priority {{priority}} -DisableDefaultSource {{disableDefaultSource}}"
+command: ".\\ChocoSource.ps1 -Name {{name}} -Source {{source}} -User {{user}} -Password {{password}} -KeyVaultSecret {{keyVaultSecret}} -Priority {{priority}} -DisableDefaultSource {{disableDefaultSource}}"
 inputs:
   name:
     type: string
@@ -23,7 +23,12 @@ inputs:
     type: string
     defaultValue: ""
     required: false
-    description: Password or API token. Reference an Azure Key Vault secret using the {{https://vault.../secrets/name}} syntax.
+    description: Password or API token provided directly. Use keyVaultSecret instead for pre-built images.
+  keyVaultSecret:
+    type: string
+    defaultValue: ""
+    required: false
+    description: Full Key Vault secret URI (e.g. "https://myvault.vault.azure.net/secrets/choco-password"). The secret is fetched at runtime using the Dev Box Managed Identity. Overrides the password input if both are provided.
   priority:
     type: string
     defaultValue: ""

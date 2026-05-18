@@ -13,6 +13,9 @@ param(
     [string] $Password,
 
     [Parameter()]
+    [string] $KeyVaultSecret,
+
+    [Parameter()]
     [string] $Priority,
 
     [Parameter()]
@@ -52,6 +55,41 @@ function Ensure-Chocolatey {
     }
 }
 
+function Get-KeyVaultSecretViaMI {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $SecretUri
+    )
+
+    # Parse the vault URI and secret name from the full secret URI
+    # Expected format: https://<vault-name>.vault.azure.net/secrets/<secret-name>
+    if ($SecretUri -notmatch '^(https://[^/]+\.vault\.azure\.net)/secrets/([^/]+)') {
+        throw "Invalid Key Vault secret URI format. Expected: https://<vault-name>.vault.azure.net/secrets/<secret-name>"
+    }
+
+    $vaultBaseUri = $Matches[1]
+    $secretName = $Matches[2]
+
+    Write-Host "Fetching secret '$secretName' from Key Vault using Managed Identity..."
+
+    # Get access token from IMDS for Key Vault
+    $tokenResponse = Invoke-RestMethod -Uri 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fvault.azure.net' `
+        -Headers @{ 'Metadata' = 'true' } `
+        -Method GET `
+        -ErrorAction Stop
+
+    $accessToken = $tokenResponse.access_token
+
+    # Fetch the secret value from Key Vault
+    $secretResponse = Invoke-RestMethod -Uri "$vaultBaseUri/secrets/${secretName}?api-version=7.4" `
+        -Headers @{ 'Authorization' = "Bearer $accessToken" } `
+        -Method GET `
+        -ErrorAction Stop
+
+    return $secretResponse.value
+}
+
 ###################################################################################################
 #
 # Main
@@ -59,6 +97,12 @@ function Ensure-Chocolatey {
 
 Write-Host "Ensuring Chocolatey is installed."
 Ensure-Chocolatey -ChocoExePath "$Choco"
+
+# Resolve password from Key Vault if a Key Vault secret URI is provided.
+if ($KeyVaultSecret) {
+    Write-Host "Resolving password from Azure Key Vault..."
+    $Password = Get-KeyVaultSecretViaMI -SecretUri $KeyVaultSecret
+}
 
 # Build argument list rather than a single string so the password is not echoed.
 $arguments = @('source', 'add', '-n', $Name, '-s', $Source, '-y')
