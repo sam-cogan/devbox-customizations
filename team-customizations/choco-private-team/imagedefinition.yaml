@@ -8,8 +8,8 @@ image: microsoftvisualstudio_visualstudioplustools_vs-2022-ent-general-win11-m36
 # Join the image build VM to a dev-center attached network connection so it can reach
 # the private Chocolatey feed (and any other internal endpoints). The network connection
 # below must already be attached to the dev center in Sweden Central.
-buildProperties:
-  networkConnection: "nc-devbox-sweden"
+# buildProperties:
+#   networkConnection: "nc-devbox-sweden"
 
 tasks:
   # 1. Register the private feed first, with credentials fetched from Key Vault
