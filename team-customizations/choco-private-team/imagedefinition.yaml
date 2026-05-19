@@ -21,43 +21,28 @@ tasks:
       driveLetter: Z
       size: "102400"
 
-  # 2. Enable Windows Subsystem for Linux and install Ubuntu in a single step.
-  #    `wsl --install -d Ubuntu` enables the WSL + VirtualMachinePlatform optional
-  #    features and registers Ubuntu as the default distro. No Chocolatey package required.
+  # 2. Enable WSL, VirtualMachinePlatform, and Windows Sandbox optional features
+  #    using DISM with /norestart so the customization task exits cleanly.
+  #    Dev Box image definitions do not support mid-build reboots: any non-zero
+  #    exit code (including the Windows 3010 "reboot required" convention) is
+  #    treated as a task failure by the Dev Box customization agent. The pending
+  #    feature changes are finalized when the developer's dev box boots for the
+  #    first time after the image is deployed. The actual Ubuntu distro install
+  #    is deferred to userTasks (post first sign-in) where WSL is functional.
   - name: ~/powershell
-    displayName: "Enable WSL and install Ubuntu"
+    displayName: "Enable WSL, VirtualMachinePlatform, and Windows Sandbox features"
     parameters:
       command: |
         $ProgressPreference = 'SilentlyContinue'
-        Write-Host "Enabling WSL and installing Ubuntu..."
-        wsl --install -d Ubuntu --no-launch
-        Write-Host "WSL + Ubuntu install requested. A reboot will complete the setup."
+        Write-Host "Enabling Microsoft-Windows-Subsystem-Linux..."
+        dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart | Out-Host
+        Write-Host "Enabling VirtualMachinePlatform..."
+        dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart | Out-Host
+        Write-Host "Enabling Containers-DisposableClientVM (Windows Sandbox)..."
+        dism.exe /online /enable-feature /featurename:Containers-DisposableClientVM /all /norestart | Out-Host
+        Write-Host "Optional features staged. They will finalize on first boot of the dev box."
 
-  # 3. Enable the Windows Sandbox optional feature. Requires a reboot, which the
-  #    Dev Box image build pipeline performs between tasks. No Chocolatey package required.
-  - name: ~/powershell
-    displayName: "Enable Windows Sandbox"
-    parameters:
-      command: |
-        $ProgressPreference = 'SilentlyContinue'
-        Write-Host "Enabling Windows Sandbox (Containers-DisposableClientVM)..."
-        $result = Enable-WindowsOptionalFeature -FeatureName "Containers-DisposableClientVM" -All -Online -NoRestart
-        if ($result.RestartNeeded) {
-          Write-Host "Windows Sandbox feature enabled. A restart is required to complete installation."
-        }
-
-  # 3a. Force a reboot to finalize WSL + Sandbox optional features before any further
-  #     tasks run. Exit code 3010 tells the Dev Box image build pipeline to reboot the
-  #     VM and continue with the next task. Without this, the pending servicing state
-  #     causes sysprep to fail with 0x8007139f at the end of the build.
-  - name: ~/powershell
-    displayName: "Reboot after enabling optional features"
-    parameters:
-      command: |
-        Write-Host "Requesting reboot to finalize WSL and Windows Sandbox features."
-        exit 3010
-
-  # 4. Register the private feed, with credentials resolved from Key Vault
+  # 3. Register the private feed, with credentials resolved from Key Vault
   #    by the Dev Box service using the {{secret_URI}} placeholder syntax.
   #    Replace the vault name, secret name, and source URL to match your environment.
   - name: choco-source
@@ -83,6 +68,17 @@ tasks:
       package: 7zip
 
 userTasks:
+  # Install the Ubuntu WSL distro after first sign-in. The WSL + VirtualMachinePlatform
+  # optional features were staged during the image build and finalized on the first
+  # boot, so `wsl --install` here just registers the distro.
+  - name: ~/powershell
+    displayName: "Install Ubuntu WSL distro"
+    parameters:
+      command: |
+        $ProgressPreference = 'SilentlyContinue'
+        Write-Host "Installing Ubuntu WSL distro..."
+        wsl --install -d Ubuntu --no-launch
+        Write-Host "Ubuntu install requested."
   - name: choco
     displayName: "Install Notepad++ (private feed)"
     parameters:

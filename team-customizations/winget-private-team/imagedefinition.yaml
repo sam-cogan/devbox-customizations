@@ -26,43 +26,73 @@ tasks:
       source: "https://func-winget-poc.azurewebsites.net/api?code={{https://kv-choco-devbox.vault.azure.net/secrets/winget-key}}"
       trustLevel: trusted
       removeDefaultSources: "true"
+  # 2. Install packages from the private feed by invoking winget.exe directly.
+  #    The built-in ~/winget task hardcodes `-Source winget` and is unusable
+  #    once the default source has been removed, but the same winget.exe
+  #    binary can be located and called from ~/powershell with --source
+  #    pointing at our registered private source.
   - name: ~/powershell
     displayName: "Install Visual Studio Code (private feed)"
     parameters:
       command: |
-        Import-Module Microsoft.WinGet.Client -ErrorAction Stop
-        Install-WinGetPackage -Id Microsoft.VisualStudioCode -Source internal -Mode Silent -Scope SystemOrUnknown
+        $ErrorActionPreference = 'Stop'
+        $winget = Get-ChildItem "$env:ProgramFiles\WindowsApps" -Recurse -Filter winget.exe -ErrorAction SilentlyContinue |
+          Sort-Object FullName -Descending | Select-Object -First 1 -ExpandProperty FullName
+        if (-not $winget) { $winget = (Get-Command winget.exe -ErrorAction SilentlyContinue).Source }
+        if (-not $winget) { throw "winget.exe not found" }
+        & $winget install --id Microsoft.VisualStudioCode --source internal --silent --accept-package-agreements --accept-source-agreements --scope machine
+        if ($LASTEXITCODE -ne 0) { throw "winget install failed with exit code $LASTEXITCODE" }
   - name: ~/powershell
     displayName: "Install Git (private feed)"
     parameters:
       command: |
-        Import-Module Microsoft.WinGet.Client -ErrorAction Stop
-        Install-WinGetPackage -Id Git.Git -Source internal -Mode Silent -Scope SystemOrUnknown
+        $ErrorActionPreference = 'Stop'
+        $winget = Get-ChildItem "$env:ProgramFiles\WindowsApps" -Recurse -Filter winget.exe -ErrorAction SilentlyContinue |
+          Sort-Object FullName -Descending | Select-Object -First 1 -ExpandProperty FullName
+        if (-not $winget) { $winget = (Get-Command winget.exe -ErrorAction SilentlyContinue).Source }
+        if (-not $winget) { throw "winget.exe not found" }
+        & $winget install --id Git.Git --source internal --silent --accept-package-agreements --accept-source-agreements --scope machine
+        if ($LASTEXITCODE -ne 0) { throw "winget install failed with exit code $LASTEXITCODE" }
   - name: ~/powershell
     displayName: "Install 7-Zip (private feed)"
     parameters:
       command: |
-        Import-Module Microsoft.WinGet.Client -ErrorAction Stop
-        Install-WinGetPackage -Id 7zip.7zip -Source internal -Mode Silent -Scope SystemOrUnknown
+        $ErrorActionPreference = 'Stop'
+        $winget = Get-ChildItem "$env:ProgramFiles\WindowsApps" -Recurse -Filter winget.exe -ErrorAction SilentlyContinue |
+          Sort-Object FullName -Descending | Select-Object -First 1 -ExpandProperty FullName
+        if (-not $winget) { $winget = (Get-Command winget.exe -ErrorAction SilentlyContinue).Source }
+        if (-not $winget) { throw "winget.exe not found" }
+        & $winget install --id 7zip.7zip --source internal --silent --accept-package-agreements --accept-source-agreements --scope machine
+        if ($LASTEXITCODE -ne 0) { throw "winget install failed with exit code $LASTEXITCODE" }
 
-userTasks:
-  - name: ~/powershell
-    displayName: "Install Notepad++ (private feed)"
-    parameters:
-      command: |
-        Import-Module Microsoft.WinGet.Client -ErrorAction Stop
-        Install-WinGetPackage -Id Notepad++.Notepad++ -Source internal -Mode Silent
-  - name: ~/powershell
-    displayName: "Configure Git Identity"
-    parameters:
-      command: |
-        Write-Host "Configuring default Git settings..."
-        git config --global init.defaultBranch main
-        git config --global core.autocrlf true
-        git config --global pull.rebase true
-        Write-Host "Git default settings configured."
-  - name: ~/git-clone
-    displayName: "Clone Team Repository"
-    parameters:
-      repositoryUrl: https://github.com/sam-cogan/TeamCustomizations
-      directory: D:\Repos\TeamCustomizations
+# userTasks temporarily disabled while validating system-level winget installs
+# from the private feed. Re-enable once the system tasks above are confirmed
+# working end-to-end.
+# userTasks:
+#   - name: ~/powershell
+#     displayName: "Install Notepad++ (private feed)"
+#     parameters:
+#       command: |
+#         $ErrorActionPreference = 'Stop'
+#         $winget = (Get-Command winget.exe -ErrorAction SilentlyContinue).Source
+#         if (-not $winget) {
+#           $winget = Get-ChildItem "$env:LOCALAPPDATA\Microsoft\WindowsApps" -Filter winget.exe -ErrorAction SilentlyContinue |
+#             Select-Object -First 1 -ExpandProperty FullName
+#         }
+#         if (-not $winget) { throw "winget.exe not found" }
+#         & $winget install --id Notepad++.Notepad++ --source internal --silent --accept-package-agreements --accept-source-agreements --scope user
+#         if ($LASTEXITCODE -ne 0) { throw "winget install failed with exit code $LASTEXITCODE" }
+#   - name: ~/powershell
+#     displayName: "Configure Git Identity"
+#     parameters:
+#       command: |
+#         Write-Host "Configuring default Git settings..."
+#         git config --global init.defaultBranch main
+#         git config --global core.autocrlf true
+#         git config --global pull.rebase true
+#         Write-Host "Git default settings configured."
+#   - name: ~/git-clone
+#     displayName: "Clone Team Repository"
+#     parameters:
+#       repositoryUrl: https://github.com/sam-cogan/TeamCustomizations
+#       directory: D:\Repos\TeamCustomizations
