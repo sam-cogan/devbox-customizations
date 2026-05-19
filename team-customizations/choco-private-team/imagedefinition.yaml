@@ -14,7 +14,7 @@ buildProperties:
 tasks:
   # 1. Provision a Dev Drive (ReFS) at Z: as a 100 GB dynamically expanding VHDX.
   #    Uses the custom dev-drive task from this catalog. No Chocolatey package required.
-  - name: ~/dev-drive
+  - name: dev-drive
     displayName: "Create Dev Drive (Z:, 100 GB VHDX)"
     parameters:
       type: vhdx
