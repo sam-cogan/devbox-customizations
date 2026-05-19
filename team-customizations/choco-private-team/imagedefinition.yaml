@@ -46,6 +46,17 @@ tasks:
           Write-Host "Windows Sandbox feature enabled. A restart is required to complete installation."
         }
 
+  # 3a. Force a reboot to finalize WSL + Sandbox optional features before any further
+  #     tasks run. Exit code 3010 tells the Dev Box image build pipeline to reboot the
+  #     VM and continue with the next task. Without this, the pending servicing state
+  #     causes sysprep to fail with 0x8007139f at the end of the build.
+  - name: ~/powershell
+    displayName: "Reboot after enabling optional features"
+    parameters:
+      command: |
+        Write-Host "Requesting reboot to finalize WSL and Windows Sandbox features."
+        exit 3010
+
   # 4. Register the private feed, with credentials resolved from Key Vault
   #    by the Dev Box service using the {{secret_URI}} placeholder syntax.
   #    Replace the vault name, secret name, and source URL to match your environment.
