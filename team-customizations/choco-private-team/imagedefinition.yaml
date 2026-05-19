@@ -24,38 +24,35 @@ tasks:
       password: "{{https://kv-choco-devbox.vault.azure.net/secrets/choco-feed-password}}"
       priority: "1"
       disableDefaultSource: "true"
+  - name: choco
+    displayName: "Install Visual Studio Code (private feed)"
+    parameters:
+      package: vscode
+  - name: choco
+    displayName: "Install Git (private feed)"
+    parameters:
+      package: git
+  - name: choco
+    displayName: "Install 7-Zip (private feed)"
+    parameters:
+      package: 7zip
 
-  # 2. Install packages - COMMENTED OUT FOR DEBUGGING
-  #    Uncomment once Key Vault integration is verified working
-  # - name: choco
-  #   displayName: "Install Visual Studio Code (private feed)"
-  #   parameters:
-  #     package: vscode
-  # - name: choco
-  #   displayName: "Install Git (private feed)"
-  #   parameters:
-  #     package: git
-  # - name: choco
-  #   displayName: "Install 7-Zip (private feed)"
-  #   parameters:
-  #     package: 7zip
-
-# userTasks:
-#   - name: choco
-#     displayName: "Install Notepad++ (private feed)"
-#     parameters:
-#       package: notepadplusplus
-#   - name: ~/powershell
-#     displayName: "Configure Git Identity"
-#     parameters:
-#       command: |
-#         Write-Host "Configuring default Git settings..."
-#         git config --global init.defaultBranch main
-#         git config --global core.autocrlf true
-#         git config --global pull.rebase true
-#         Write-Host "Git default settings configured."
-#   - name: ~/git-clone
-#     displayName: "Clone Team Repository"
-#     parameters:
-#       repositoryUrl: https://github.com/sam-cogan/TeamCustomizations
-#       directory: D:\Repos\TeamCustomizations
+userTasks:
+  - name: choco
+    displayName: "Install Notepad++ (private feed)"
+    parameters:
+      package: notepadplusplus
+  - name: ~/powershell
+    displayName: "Configure Git Identity"
+    parameters:
+      command: |
+        Write-Host "Configuring default Git settings..."
+        git config --global init.defaultBranch main
+        git config --global core.autocrlf true
+        git config --global pull.rebase true
+        Write-Host "Git default settings configured."
+  - name: ~/git-clone
+    displayName: "Clone Team Repository"
+    parameters:
+      repositoryUrl: https://github.com/sam-cogan/TeamCustomizations
+      directory: D:\Repos\TeamCustomizations
