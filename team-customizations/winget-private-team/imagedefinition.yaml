@@ -29,24 +29,20 @@ tasks:
     displayName: "Install Visual Studio Code (private feed)"
     parameters:
       package: Microsoft.VisualStudioCode
-      source: internal
   - name: ~/winget
     displayName: "Install Git (private feed)"
     parameters:
       package: Git.Git
-      source: internal
   - name: ~/winget
     displayName: "Install 7-Zip (private feed)"
     parameters:
       package: 7zip.7zip
-      source: internal
 
 userTasks:
   - name: ~/winget
     displayName: "Install Notepad++ (private feed)"
     parameters:
       package: Notepad++.Notepad++
-      source: internal
   - name: ~/powershell
     displayName: "Configure Git Identity"
     parameters:
