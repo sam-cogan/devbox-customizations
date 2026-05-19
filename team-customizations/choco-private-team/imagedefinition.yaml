@@ -12,7 +12,41 @@ buildProperties:
   networkConnection: "nc-devbox-sweden"
 
 tasks:
-  # 1. Register the private feed first, with credentials resolved from Key Vault
+  # 1. Provision a Dev Drive (ReFS) at Z: as a 100 GB dynamically expanding VHDX.
+  #    Uses the custom dev-drive task from this catalog. No Chocolatey package required.
+  - name: ~/dev-drive
+    displayName: "Create Dev Drive (Z:, 100 GB VHDX)"
+    parameters:
+      type: vhdx
+      driveLetter: Z
+      size: "102400"
+
+  # 2. Enable Windows Subsystem for Linux and install Ubuntu in a single step.
+  #    `wsl --install -d Ubuntu` enables the WSL + VirtualMachinePlatform optional
+  #    features and registers Ubuntu as the default distro. No Chocolatey package required.
+  - name: ~/powershell
+    displayName: "Enable WSL and install Ubuntu"
+    parameters:
+      command: |
+        $ProgressPreference = 'SilentlyContinue'
+        Write-Host "Enabling WSL and installing Ubuntu..."
+        wsl --install -d Ubuntu --no-launch
+        Write-Host "WSL + Ubuntu install requested. A reboot will complete the setup."
+
+  # 3. Enable the Windows Sandbox optional feature. Requires a reboot, which the
+  #    Dev Box image build pipeline performs between tasks. No Chocolatey package required.
+  - name: ~/powershell
+    displayName: "Enable Windows Sandbox"
+    parameters:
+      command: |
+        $ProgressPreference = 'SilentlyContinue'
+        Write-Host "Enabling Windows Sandbox (Containers-DisposableClientVM)..."
+        $result = Enable-WindowsOptionalFeature -FeatureName "Containers-DisposableClientVM" -All -Online -NoRestart
+        if ($result.RestartNeeded) {
+          Write-Host "Windows Sandbox feature enabled. A restart is required to complete installation."
+        }
+
+  # 4. Register the private feed, with credentials resolved from Key Vault
   #    by the Dev Box service using the {{secret_URI}} placeholder syntax.
   #    Replace the vault name, secret name, and source URL to match your environment.
   - name: choco-source

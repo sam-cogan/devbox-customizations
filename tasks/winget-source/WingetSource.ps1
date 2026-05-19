@@ -71,6 +71,20 @@ function Invoke-Winget {
 $script:Winget = Get-WingetPath
 Write-Host "Using winget at: $script:Winget"
 
+# Detect unresolved Dev Box secret placeholders. If we see "{{...}}" here, the
+# Dev Box service did not substitute the Key Vault secret URI and the literal
+# string would be sent as the auth header value. Fail fast with a clear message
+# instead of letting winget return an opaque "Failed to open the added source".
+foreach ($pair in @(
+    @{ Name = "Source";       Value = $Source },
+    @{ Name = "HeaderValue";  Value = $HeaderValue },
+    @{ Name = "HeaderName";   Value = $HeaderName }
+)) {
+    if ($pair.Value -match '{{.*}}') {
+        throw "Parameter '$($pair.Name)' still contains an unresolved '{{...}}' placeholder: '$($pair.Value)'. Ensure the dev center's managed identity has 'Key Vault Secrets User' on the target Key Vault and the secret URI is correct."
+    }
+}
+
 # Accept any pending source agreements so non-interactive use doesn't block.
 Invoke-Winget @("settings", "--enable", "LocalManifestFiles") 2>$null | Out-Null
 

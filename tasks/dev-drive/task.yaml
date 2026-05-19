@@ -1,0 +1,23 @@
+# Creates a Dev Drive (ReFS) on the Dev Box. Either provisions a new VHDX-backed
+# Dev Drive or carves one out of the existing C: partition.
+# Adapted from https://github.com/dstamand-msft/Devbox-Customizations
+name: dev-drive
+description: Creates a Dev Drive (ReFS) either as a VHDX or by resizing C:.
+author: Platform Team
+command: ".\\DevDrive.ps1 -Type {{type}} -DriveLetter {{driveLetter}} -DriveSize {{size}}"
+inputs:
+  type:
+    type: string
+    defaultValue: "vhdx"
+    required: true
+    description: How to create the Dev Drive. Either "vhdx" (new dynamically expanding VHDX) or "resize" (carve from C:).
+  driveLetter:
+    type: string
+    defaultValue: "Z"
+    required: true
+    description: The drive letter to assign to the Dev Drive (single uppercase letter).
+  size:
+    type: string
+    defaultValue: "102400"
+    required: true
+    description: The size of the Dev Drive in MB. Minimum 51200 (50 GB) for the "resize" type.
