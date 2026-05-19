@@ -26,24 +26,32 @@ tasks:
       source: "https://func-winget-poc.azurewebsites.net/api?code={{https://kv-choco-devbox.vault.azure.net/secrets/winget-key}}"
       trustLevel: trusted
       removeDefaultSources: "true"
-  - name: ~/winget
+  - name: ~/powershell
     displayName: "Install Visual Studio Code (private feed)"
     parameters:
-      package: Microsoft.VisualStudioCode
-  - name: ~/winget
+      command: |
+        Import-Module Microsoft.WinGet.Client -ErrorAction Stop
+        Install-WinGetPackage -Id Microsoft.VisualStudioCode -Source internal -Mode Silent -Scope SystemOrUnknown
+  - name: ~/powershell
     displayName: "Install Git (private feed)"
     parameters:
-      package: Git.Git
-  - name: ~/winget
+      command: |
+        Import-Module Microsoft.WinGet.Client -ErrorAction Stop
+        Install-WinGetPackage -Id Git.Git -Source internal -Mode Silent -Scope SystemOrUnknown
+  - name: ~/powershell
     displayName: "Install 7-Zip (private feed)"
     parameters:
-      package: 7zip.7zip
+      command: |
+        Import-Module Microsoft.WinGet.Client -ErrorAction Stop
+        Install-WinGetPackage -Id 7zip.7zip -Source internal -Mode Silent -Scope SystemOrUnknown
 
 userTasks:
-  - name: ~/winget
+  - name: ~/powershell
     displayName: "Install Notepad++ (private feed)"
     parameters:
-      package: Notepad++.Notepad++
+      command: |
+        Import-Module Microsoft.WinGet.Client -ErrorAction Stop
+        Install-WinGetPackage -Id Notepad++.Notepad++ -Source internal -Mode Silent
   - name: ~/powershell
     displayName: "Configure Git Identity"
     parameters:
