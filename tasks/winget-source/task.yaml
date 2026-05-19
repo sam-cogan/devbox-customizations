@@ -1,0 +1,37 @@
+# Registers a private Winget REST source, optionally authenticated with a header
+# (for example an Azure Function key passed as x-functions-key).
+name: winget-source
+description: Registers a private Winget REST source with an optional auth header.
+author: Platform Team
+command: ".\\WingetSource.ps1 -Name {{name}} -Source {{source}} -HeaderName {{headerName}} -HeaderValue {{headerValue}} -TrustLevel {{trustLevel}} -RemoveDefaultSources {{removeDefaultSources}}"
+inputs:
+  name:
+    type: string
+    defaultValue: ""
+    required: true
+    description: Friendly name to register the source under (for example, "internal").
+  source:
+    type: string
+    defaultValue: ""
+    required: true
+    description: URL of the Winget REST source (for example, the function app endpoint).
+  headerName:
+    type: string
+    defaultValue: "x-functions-key"
+    required: false
+    description: Name of the HTTP header used to authenticate against the source.
+  headerValue:
+    type: string
+    defaultValue: ""
+    required: false
+    description: Value for the auth header. Use a Key Vault secret placeholder to resolve at customization time.
+  trustLevel:
+    type: string
+    defaultValue: "trusted"
+    required: false
+    description: Trust level for the source. One of "trusted" or "none".
+  removeDefaultSources:
+    type: string
+    defaultValue: "false"
+    required: false
+    description: Set to "true" to remove the public winget/msstore sources after registering this one.

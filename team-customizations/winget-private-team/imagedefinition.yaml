@@ -1,0 +1,63 @@
+$schema: "1.0"
+name: "winget-private-team"
+description: "Team dev box that installs packages from a private Winget REST source fronted by an Azure Function. The function key is pulled from Azure Key Vault."
+
+# Base image
+image: microsoftvisualstudio_visualstudioplustools_vs-2022-ent-general-win11-m365-gen2
+
+# Join the image build VM to a dev-center attached network connection so it can reach
+# the private Winget source (and any other internal endpoints). The network connection
+# below must already be attached to the dev center in Sweden Central.
+buildProperties:
+  networkConnection: "nc-devbox-sweden"
+
+tasks:
+  # 1. Register the private Winget source first, with the function key resolved
+  #    from Key Vault by the Dev Box service using the {{secret_URI}} placeholder
+  #    syntax. Replace the vault name, secret name, and source URL to match your
+  #    environment.
+  - name: winget-source
+    displayName: "Register private Winget source"
+    parameters:
+      name: internal
+      source: https://func-winget-poc.azurewebsites.net/api
+      headerName: x-functions-key
+      headerValue: "{{https://kv-choco-devbox.vault.azure.net/secrets/winget-key}}"
+      trustLevel: trusted
+      removeDefaultSources: "true"
+  - name: ~/winget
+    displayName: "Install Visual Studio Code (private feed)"
+    parameters:
+      package: Microsoft.VisualStudioCode
+      source: internal
+  - name: ~/winget
+    displayName: "Install Git (private feed)"
+    parameters:
+      package: Git.Git
+      source: internal
+  - name: ~/winget
+    displayName: "Install 7-Zip (private feed)"
+    parameters:
+      package: 7zip.7zip
+      source: internal
+
+userTasks:
+  - name: ~/winget
+    displayName: "Install Notepad++ (private feed)"
+    parameters:
+      package: Notepad++.Notepad++
+      source: internal
+  - name: ~/powershell
+    displayName: "Configure Git Identity"
+    parameters:
+      command: |
+        Write-Host "Configuring default Git settings..."
+        git config --global init.defaultBranch main
+        git config --global core.autocrlf true
+        git config --global pull.rebase true
+        Write-Host "Git default settings configured."
+  - name: ~/git-clone
+    displayName: "Clone Team Repository"
+    parameters:
+      repositoryUrl: https://github.com/sam-cogan/TeamCustomizations
+      directory: D:\Repos\TeamCustomizations
