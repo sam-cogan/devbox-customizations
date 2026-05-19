@@ -12,17 +12,18 @@ buildProperties:
   networkConnection: "nc-devbox-sweden"
 
 tasks:
-  # 1. Register the private Winget source first, with the function key resolved
-  #    from Key Vault by the Dev Box service using the {{secret_URI}} placeholder
-  #    syntax. Replace the vault name, secret name, and source URL to match your
-  #    environment.
+  # 1. Register the private Winget source. The Azure Function key is embedded
+  #    in the source URL's `?code=` query string and resolved from Key Vault by
+  #    the Dev Box service using the {{secret_URI}} placeholder syntax. This is
+  #    used instead of a custom HTTP header because winget's `--header` flag
+  #    only sets the Windows-Package-Manager protocol header, not arbitrary
+  #    headers like `x-functions-key`. Replace the vault name, secret name, and
+  #    source URL to match your environment.
   - name: winget-source
     displayName: "Register private Winget source"
     parameters:
       name: internal
-      source: https://func-winget-poc.azurewebsites.net/api
-      headerName: x-functions-key
-      headerValue: "{{https://kv-choco-devbox.vault.azure.net/secrets/winget-key}}"
+      source: "https://func-winget-poc.azurewebsites.net/api?code={{https://kv-choco-devbox.vault.azure.net/secrets/winget-key}}"
       trustLevel: trusted
       removeDefaultSources: "true"
   - name: ~/winget

@@ -7,12 +7,6 @@ param(
     [string] $Source,
 
     [Parameter()]
-    [string] $HeaderName = "x-functions-key",
-
-    [Parameter()]
-    [string] $HeaderValue,
-
-    [Parameter()]
     [string] $TrustLevel = "trusted",
 
     [Parameter()]
@@ -56,7 +50,20 @@ function Get-WingetPath {
 function Invoke-Winget {
     param([string[]] $Arguments)
 
-    Write-Host "winget $($Arguments -join ' ')"
+    # Do not echo the full arg list — the source URL may contain a secret in
+    # its query string (for example, an Azure Function ?code=...). Log a
+    # redacted form instead.
+    $redacted = @()
+    foreach ($a in $Arguments) {
+        if ($a -match '^https?://') {
+            $redacted += ($a -replace '([?&](code|key|sig)=)[^&]+', '$1***')
+        }
+        else {
+            $redacted += $a
+        }
+    }
+    Write-Host "winget $($redacted -join ' ')"
+
     & $script:Winget @Arguments
     if ($LASTEXITCODE -ne 0) {
         throw "winget exited with code $LASTEXITCODE"
@@ -73,20 +80,11 @@ Write-Host "Using winget at: $script:Winget"
 
 # Detect unresolved Dev Box secret placeholders. If we see "{{...}}" here, the
 # Dev Box service did not substitute the Key Vault secret URI and the literal
-# string would be sent as the auth header value. Fail fast with a clear message
-# instead of letting winget return an opaque "Failed to open the added source".
-foreach ($pair in @(
-    @{ Name = "Source";       Value = $Source },
-    @{ Name = "HeaderValue";  Value = $HeaderValue },
-    @{ Name = "HeaderName";   Value = $HeaderName }
-)) {
-    if ($pair.Value -match '{{.*}}') {
-        throw "Parameter '$($pair.Name)' still contains an unresolved '{{...}}' placeholder: '$($pair.Value)'. Ensure the dev center's managed identity has 'Key Vault Secrets User' on the target Key Vault and the secret URI is correct."
-    }
+# string would be sent as part of the source URL. Fail fast with a clear
+# message instead of letting winget return an opaque error.
+if ($Source -match '{{.*}}') {
+    throw "Parameter 'Source' still contains an unresolved '{{...}}' placeholder: '$Source'. Ensure the dev center's managed identity has 'Key Vault Secrets User' on the target Key Vault and the secret URI is correct."
 }
-
-# Accept any pending source agreements so non-interactive use doesn't block.
-Invoke-Winget @("settings", "--enable", "LocalManifestFiles") 2>$null | Out-Null
 
 # Remove an existing registration with the same name so this task is idempotent.
 $existing = & $script:Winget source list 2>$null
@@ -96,14 +94,6 @@ if ($LASTEXITCODE -eq 0 -and $existing -match [Regex]::Escape($Name)) {
 }
 
 $addArgs = @("source", "add", "--name", $Name, "--arg", $Source, "--type", "Microsoft.Rest", "--accept-source-agreements")
-
-if ($HeaderValue) {
-    if (-not $HeaderName) {
-        throw "HeaderName must be provided when HeaderValue is set."
-    }
-    $headerJson = (@{ $HeaderName = $HeaderValue } | ConvertTo-Json -Compress)
-    $addArgs += @("--header", $headerJson)
-}
 
 if ($TrustLevel) {
     $addArgs += @("--trust-level", $TrustLevel)

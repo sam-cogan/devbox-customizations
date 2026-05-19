@@ -63,7 +63,7 @@ Ensure-Chocolatey -ChocoExePath "$Choco"
 # Build argument list rather than a single string so the password is not echoed.
 $arguments = @('source', 'add', '-n', $Name, '-s', $Source, '-y')
 
-if ($Priority) {
+if ($Priority) { 
     $arguments += @('--priority', $Priority)
 }
 

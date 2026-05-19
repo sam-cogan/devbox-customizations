@@ -1,9 +1,11 @@
-# Registers a private Winget REST source, optionally authenticated with a header
-# (for example an Azure Function key passed as x-functions-key).
+# Registers a private Winget REST source. Any required authentication (for
+# example, an Azure Function key) should be embedded in the source URL as a
+# query string parameter, since winget's `--header` flag only sets the single
+# Windows-Package-Manager protocol header, not arbitrary HTTP headers.
 name: winget-source
-description: Registers a private Winget REST source with an optional auth header.
+description: Registers a private Winget REST source.
 author: Platform Team
-command: ".\\WingetSource.ps1 -Name {{name}} -Source {{source}} -HeaderName {{headerName}} -HeaderValue {{headerValue}} -TrustLevel {{trustLevel}} -RemoveDefaultSources {{removeDefaultSources}}"
+command: ".\\WingetSource.ps1 -Name {{name}} -Source {{source}} -TrustLevel {{trustLevel}} -RemoveDefaultSources {{removeDefaultSources}}"
 inputs:
   name:
     type: string
@@ -14,17 +16,12 @@ inputs:
     type: string
     defaultValue: ""
     required: true
-    description: URL of the Winget REST source (for example, the function app endpoint).
-  headerName:
-    type: string
-    defaultValue: "x-functions-key"
-    required: false
-    description: Name of the HTTP header used to authenticate against the source.
-  headerValue:
-    type: string
-    defaultValue: ""
-    required: false
-    description: Value for the auth header. Use a Key Vault secret placeholder to resolve at customization time.
+    description: >-
+      URL of the Winget REST source. If the endpoint requires authentication
+      (for example, an Azure Function), include the secret in the URL query
+      string and resolve it from Key Vault using the "{{<KEY_VAULT_SECRET_URI>}}"
+      placeholder syntax, e.g.
+      https://func.example.com/api?code={{https://kv.vault.azure.net/secrets/winget-key}}
   trustLevel:
     type: string
     defaultValue: "trusted"
