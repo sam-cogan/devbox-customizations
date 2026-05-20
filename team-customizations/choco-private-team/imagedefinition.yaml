@@ -2,7 +2,7 @@ $schema: "1.0"
 name: "choco-private-team"
 description: "Team dev box that installs packages from a private Chocolatey feed reached over a VNet. Credentials are pulled from Azure Key Vault."
 
-# Base image
+# Base image using customer gallery base image
 image: gal_devbox_images/win11-wsl-enabled
 
 # Join the image build VM to a dev-center attached network connection so it can reach
@@ -20,29 +20,7 @@ tasks:
       type: vhdx
       driveLetter: Z
       size: "102400"
-
-  # 2. Enable WSL, VirtualMachinePlatform, and Windows Sandbox optional features
-  #    using DISM with /norestart so the customization task exits cleanly.
-  #    Dev Box image definitions do not support mid-build reboots: any non-zero
-  #    exit code (including the Windows 3010 "reboot required" convention) is
-  #    treated as a task failure by the Dev Box customization agent. The pending
-  #    feature changes are finalized when the developer's dev box boots for the
-  #    first time after the image is deployed. The actual Ubuntu distro install
-  # #    is deferred to userTasks (post first sign-in) where WSL is functional.
-  # - name: ~/powershell
-  #   displayName: "Enable WSL, VirtualMachinePlatform, and Windows Sandbox features"
-  #   parameters:
-  #     command: |
-  #       $ProgressPreference = 'SilentlyContinue'
-  #       Write-Host "Enabling Microsoft-Windows-Subsystem-Linux..."
-  #       dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart | Out-Host
-  #       Write-Host "Enabling VirtualMachinePlatform..."
-  #       dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart | Out-Host
-  #       Write-Host "Enabling Containers-DisposableClientVM (Windows Sandbox)..."
-  #       dism.exe /online /enable-feature /featurename:Containers-DisposableClientVM /all /norestart | Out-Host
-  #       Write-Host "Optional features staged. They will finalize on first boot of the dev box."
-
-  # 3. Register the private feed, with credentials resolved from Key Vault
+  # 2. Register the private feed, with credentials resolved from Key Vault
   #    by the Dev Box service using the {{secret_URI}} placeholder syntax.
   #    Replace the vault name, secret name, and source URL to match your environment.
   - name: choco-source
@@ -68,17 +46,6 @@ tasks:
       package: 7zip
 
 userTasks:
-  # Install the Ubuntu WSL distro after first sign-in. The WSL + VirtualMachinePlatform
-  # optional features were staged during the image build and finalized on the first
-  # boot, so `wsl --install` here just registers the distro.
-  - name: ~/powershell
-    displayName: "Install Ubuntu WSL distro"
-    parameters:
-      command: |
-        $ProgressPreference = 'SilentlyContinue'
-        Write-Host "Installing Ubuntu WSL distro..."
-        wsl --install -d Ubuntu --no-launch
-        Write-Host "Ubuntu install requested."
   - name: choco
     displayName: "Install Notepad++ (private feed)"
     parameters:
