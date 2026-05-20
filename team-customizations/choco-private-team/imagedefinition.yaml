@@ -28,19 +28,19 @@ tasks:
   #    treated as a task failure by the Dev Box customization agent. The pending
   #    feature changes are finalized when the developer's dev box boots for the
   #    first time after the image is deployed. The actual Ubuntu distro install
-  #    is deferred to userTasks (post first sign-in) where WSL is functional.
-  - name: ~/powershell
-    displayName: "Enable WSL, VirtualMachinePlatform, and Windows Sandbox features"
-    parameters:
-      command: |
-        $ProgressPreference = 'SilentlyContinue'
-        Write-Host "Enabling Microsoft-Windows-Subsystem-Linux..."
-        dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart | Out-Host
-        Write-Host "Enabling VirtualMachinePlatform..."
-        dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart | Out-Host
-        Write-Host "Enabling Containers-DisposableClientVM (Windows Sandbox)..."
-        dism.exe /online /enable-feature /featurename:Containers-DisposableClientVM /all /norestart | Out-Host
-        Write-Host "Optional features staged. They will finalize on first boot of the dev box."
+  # #    is deferred to userTasks (post first sign-in) where WSL is functional.
+  # - name: ~/powershell
+  #   displayName: "Enable WSL, VirtualMachinePlatform, and Windows Sandbox features"
+  #   parameters:
+  #     command: |
+  #       $ProgressPreference = 'SilentlyContinue'
+  #       Write-Host "Enabling Microsoft-Windows-Subsystem-Linux..."
+  #       dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart | Out-Host
+  #       Write-Host "Enabling VirtualMachinePlatform..."
+  #       dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart | Out-Host
+  #       Write-Host "Enabling Containers-DisposableClientVM (Windows Sandbox)..."
+  #       dism.exe /online /enable-feature /featurename:Containers-DisposableClientVM /all /norestart | Out-Host
+  #       Write-Host "Optional features staged. They will finalize on first boot of the dev box."
 
   # 3. Register the private feed, with credentials resolved from Key Vault
   #    by the Dev Box service using the {{secret_URI}} placeholder syntax.
