@@ -31,39 +31,39 @@ tasks:
   #    once the default source has been removed, but the same winget.exe
   #    binary can be located and called from ~/powershell with --source
   #    pointing at our registered private source.
-  - name: ~/powershell
-    displayName: "Install Visual Studio Code (private feed)"
-    parameters:
-      command: |
-        $ErrorActionPreference = 'Stop'
-        $winget = Get-ChildItem "$env:ProgramFiles\WindowsApps" -Recurse -Filter winget.exe -ErrorAction SilentlyContinue |
-          Sort-Object FullName -Descending | Select-Object -First 1 -ExpandProperty FullName
-        if (-not $winget) { $winget = (Get-Command winget.exe -ErrorAction SilentlyContinue).Source }
-        if (-not $winget) { throw "winget.exe not found" }
-        & $winget install --id Microsoft.VisualStudioCode --source internal --silent --accept-package-agreements --accept-source-agreements --scope machine
-        if ($LASTEXITCODE -ne 0) { throw "winget install failed with exit code $LASTEXITCODE" }
-  - name: ~/powershell
-    displayName: "Install Git (private feed)"
-    parameters:
-      command: |
-        $ErrorActionPreference = 'Stop'
-        $winget = Get-ChildItem "$env:ProgramFiles\WindowsApps" -Recurse -Filter winget.exe -ErrorAction SilentlyContinue |
-          Sort-Object FullName -Descending | Select-Object -First 1 -ExpandProperty FullName
-        if (-not $winget) { $winget = (Get-Command winget.exe -ErrorAction SilentlyContinue).Source }
-        if (-not $winget) { throw "winget.exe not found" }
-        & $winget install --id Git.Git --source internal --silent --accept-package-agreements --accept-source-agreements --scope machine
-        if ($LASTEXITCODE -ne 0) { throw "winget install failed with exit code $LASTEXITCODE" }
-  - name: ~/powershell
-    displayName: "Install 7-Zip (private feed)"
-    parameters:
-      command: |
-        $ErrorActionPreference = 'Stop'
-        $winget = Get-ChildItem "$env:ProgramFiles\WindowsApps" -Recurse -Filter winget.exe -ErrorAction SilentlyContinue |
-          Sort-Object FullName -Descending | Select-Object -First 1 -ExpandProperty FullName
-        if (-not $winget) { $winget = (Get-Command winget.exe -ErrorAction SilentlyContinue).Source }
-        if (-not $winget) { throw "winget.exe not found" }
-        & $winget install --id 7zip.7zip --source internal --silent --accept-package-agreements --accept-source-agreements --scope machine
-        if ($LASTEXITCODE -ne 0) { throw "winget install failed with exit code $LASTEXITCODE" }
+  # - name: ~/powershell
+  #   displayName: "Install Visual Studio Code (private feed)"
+  #   parameters:
+  #     command: |
+  #       $ErrorActionPreference = 'Stop'
+  #       $winget = Get-ChildItem "$env:ProgramFiles\WindowsApps" -Recurse -Filter winget.exe -ErrorAction SilentlyContinue |
+  #         Sort-Object FullName -Descending | Select-Object -First 1 -ExpandProperty FullName
+  #       if (-not $winget) { $winget = (Get-Command winget.exe -ErrorAction SilentlyContinue).Source }
+  #       if (-not $winget) { throw "winget.exe not found" }
+  #       & $winget install --id Microsoft.VisualStudioCode --source internal --silent --accept-package-agreements --accept-source-agreements --scope machine
+  #       if ($LASTEXITCODE -ne 0) { throw "winget install failed with exit code $LASTEXITCODE" }
+  # - name: ~/powershell
+  #   displayName: "Install Git (private feed)"
+  #   parameters:
+  #     command: |
+  #       $ErrorActionPreference = 'Stop'
+  #       $winget = Get-ChildItem "$env:ProgramFiles\WindowsApps" -Recurse -Filter winget.exe -ErrorAction SilentlyContinue |
+  #         Sort-Object FullName -Descending | Select-Object -First 1 -ExpandProperty FullName
+  #       if (-not $winget) { $winget = (Get-Command winget.exe -ErrorAction SilentlyContinue).Source }
+  #       if (-not $winget) { throw "winget.exe not found" }
+  #       & $winget install --id Git.Git --source internal --silent --accept-package-agreements --accept-source-agreements --scope machine
+  #       if ($LASTEXITCODE -ne 0) { throw "winget install failed with exit code $LASTEXITCODE" }
+  # - name: ~/powershell
+  #   displayName: "Install 7-Zip (private feed)"
+  #   parameters:
+  #     command: |
+  #       $ErrorActionPreference = 'Stop'
+  #       $winget = Get-ChildItem "$env:ProgramFiles\WindowsApps" -Recurse -Filter winget.exe -ErrorAction SilentlyContinue |
+  #         Sort-Object FullName -Descending | Select-Object -First 1 -ExpandProperty FullName
+  #       if (-not $winget) { $winget = (Get-Command winget.exe -ErrorAction SilentlyContinue).Source }
+  #       if (-not $winget) { throw "winget.exe not found" }
+  #       & $winget install --id 7zip.7zip --source internal --silent --accept-package-agreements --accept-source-agreements --scope machine
+  #       if ($LASTEXITCODE -ne 0) { throw "winget install failed with exit code $LASTEXITCODE" }
 
 # userTasks temporarily disabled while validating system-level winget installs
 # from the private feed. Re-enable once the system tasks above are confirmed
