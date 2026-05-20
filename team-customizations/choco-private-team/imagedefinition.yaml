@@ -3,7 +3,7 @@ name: "choco-private-team"
 description: "Team dev box that installs packages from a private Chocolatey feed reached over a VNet. Credentials are pulled from Azure Key Vault."
 
 # Base image
-image: microsoftvisualstudio_visualstudioplustools_vs-2022-ent-general-win11-m365-gen2
+image: gal_devbox_images/win11-wsl-enabled@latest
 
 # Join the image build VM to a dev-center attached network connection so it can reach
 # the private Chocolatey feed (and any other internal endpoints). The network connection
